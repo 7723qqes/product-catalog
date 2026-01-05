@@ -2,15 +2,14 @@ backend:
   name: github
   repo: 7723qqes/product-catalog
   branch: main
-  base_url: https://product-catalog-7jm.pages.dev  # 替换为你的实际 Cloudflare Pages 域名，例如 https://product-catalog-7jm.pages.dev，不要加尾部 /
-  site_domain: product-catalog-7jm.pages.dev  # 同上，只域名部分，不要 https:// 和尾部 /
-  auth_endpoint: api/auth  # 默认是 /api/auth，如果你的 functions 用其他路径就改
+  base_url: https://product-catalog-7jm.pages.dev
+  site_domain: product-catalog-7jm.pages.dev
+  auth_endpoint: api/auth
 media_folder: "images"
 public_folder: "/images"
 media_library:
   name: uploadcare
 collections:
-  # 你的 products collection 保持不变
   - name: "products"
     label: "商品"
     folder: "products"
@@ -19,12 +18,10 @@ collections:
     fields:
       - { label: "商品名", name: "name", widget: "string" }
       - { label: "价格", name: "price", widget: "number" }
-      - {
-          label: "货币",
-          name: "currency",
-          widget: "select",
-          options: ["USD", "KHR"]
-        }
+      - label: "货币"
+        name: "currency"
+        widget: "select"
+        options: ["USD", "KHR"]
       - { label: "单位", name: "unit", widget: "string" }
       - { label: "分类", name: "category", widget: "string" }
       - { label: "图片", name: "image", widget: "image" }
