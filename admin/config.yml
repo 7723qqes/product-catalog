@@ -3,3 +3,29 @@ backend:
   repo: 7723qqes/product-catalog
   branch: main
   auth_type: pkce
+
+media_folder: "images"
+public_folder: "/images"
+
+media_library:
+  name: uploadcare
+
+collections:
+  - name: "products"
+    label: "商品"
+    folder: "products"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "商品名", name: "name", widget: "string" }
+      - { label: "价格", name: "price", widget: "number" }
+      - {
+          label: "货币",
+          name: "currency",
+          widget: "select",
+          options: ["USD", "KHR"]
+        }
+      - { label: "单位", name: "unit", widget: "string" }
+      - { label: "分类", name: "category", widget: "string" }
+      - { label: "图片", name: "image", widget: "image" }
+      - { label: "是否显示", name: "visible", widget: "boolean", default: true }
