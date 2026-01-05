@@ -3,8 +3,8 @@ backend:
   repo: 7723qqes/product-catalog
   branch: main
   base_url: https://product-catalog-7jm.pages.dev  # 替换为你的实际 Cloudflare Pages 域名，例如 https://product-catalog-7jm.pages.dev，不要加尾部 /
-  auth_endpoint: api/auth  # 默认是 /api/auth，如果你的 functions 用其他路径就改
   site_domain: product-catalog-7jm.pages.dev  # 同上，只域名部分，不要 https:// 和尾部 /
+  auth_endpoint: api/auth  # 默认是 /api/auth，如果你的 functions 用其他路径就改
 media_folder: "images"
 public_folder: "/images"
 media_library:
