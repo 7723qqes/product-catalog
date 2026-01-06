@@ -1,28 +1,21 @@
 backend:
   name: github
-  repo: 7723qqes/product-catalog
-  branch: main
-  base_url: https://product-catalog-7jm.pages.dev
-  site_domain: product-catalog-7jm.pages.dev
-  auth_endpoint: api/auth
-media_folder: "images"
-public_folder: "/images"
-media_library:
-  name: uploadcare
+  repo: username/repo
+  branch: main # Branch to update (optional; defaults to master)
+  base_url: https://example.com
+  auth_endpoint: /api/auth
+media_folder: static/img
+public_folder: /img
 collections:
-  - name: "products"
-    label: "商品"
-    folder: "products"
+  - name: 'blog'
+    label: 'Blog'
+    folder: 'content/blog'
     create: true
-    slug: "{{slug}}"
+    slug: '{{slug}}'
+    editor:
+      preview: false
     fields:
-      - { label: "商品名", name: "name", widget: "string" }
-      - { label: "价格", name: "price", widget: "number" }
-      - label: "货币"
-        name: "currency"
-        widget: "select"
-        options: ["USD", "KHR"]
-      - { label: "单位", name: "unit", widget: "string" }
-      - { label: "分类", name: "category", widget: "string" }
-      - { label: "图片", name: "image", widget: "image" }
-      - { label: "是否显示", name: "visible", widget: "boolean", default: true }
+      - { label: 'Title', name: 'title', widget: 'string' }
+      - { label: 'Publish Date', name: 'date', widget: 'datetime' }
+      - { label: 'Description', name: 'description', widget: 'string' }
+      - { label: 'Body', name: 'body', widget: 'markdown' }
