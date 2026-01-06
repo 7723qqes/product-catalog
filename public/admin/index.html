@@ -4,54 +4,44 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>商品管理后台</title>
-  <!-- Sveltia CMS 主脚本 -->
   <script src="https://unpkg.com/@sveltia/cms@latest/dist/sveltia-cms.js"></script>
-  <!-- 自定义美化样式 -->
   <style>
     :root {
-      --cms-primary: #2563eb;
-      --cms-primary-hover: #1d4ed8;
-      --cms-bg: #f8fafc;
-      --cms-surface: #ffffff;
-      --cms-text: #1e293b;
-      --cms-border: #e2e8f0;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --text: #111827;
+      --text-secondary: #4b5563;
+      --border: #e5e7eb;
     }
-    body { background: var(--cms-bg); margin: 0; font-family: system-ui, -apple-system, sans-serif; }
-    /* 整体布局更宽松 */
-    .sveltia-cms { max-width: 1400px; margin: 0 auto; padding: 16px; }
-    /* 顶部栏美化 */
-    .sveltia-cms header { background: var(--cms-surface); border-bottom: 1px solid var(--cms-border); border-radius: 12px 12px 0 0; padding: 16px; }
-    /* 侧边栏 */
-    .sveltia-cms nav { background: var(--cms-surface); border-right: 1px solid var(--cms-border); border-radius: 12px 0 0 12px; }
-    /* 主内容区 */
-    .sveltia-cms main { background: var(--cms-surface); border-radius: 0 12px 12px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-    /* 按钮美化 */
-    .sveltia-cms button primary {
-      background: var(--cms-primary) !important;
-      border-radius: 8px !important;
-      padding: 10px 20px !important;
+    body { background: var(--bg); margin: 0; font-family: system-ui, sans-serif; }
+    .sveltia-cms { max-width: 1600px; margin: 0 auto; padding: 24px; }
+    .sveltia-cms header { background: var(--surface); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 24px; }
+    .sveltia-cms nav { background: var(--surface); border-radius: 16px 0 0 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .sveltia-cms main { background: var(--surface); border-radius: 0 16px 16px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .sveltia-cms button.primary {
+      background: var(--primary) !important;
+      border-radius: 12px !important;
+      padding: 12px 28px !important;
+      font-size: 1.1em !important;
       font-weight: 600;
     }
-    .sveltia-cms button primary:hover {
-      background: var(--cms-primary-hover) !important;
-    }
-    /* 卡片和输入框 */
-    .sveltia-cms .card, .sveltia-cms input, .sveltia-cms select, .sveltia-cms textarea {
-      border-radius: 8px !important;
-      border: 1px solid var(--cms-border) !important;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    /* 商品列表更清晰 */
+    .sveltia-cms button.primary:hover { background: var(--primary-hover) !important; }
     .sveltia-cms .entry-list-item {
-      border-radius: 10px;
-      margin: 8px 0;
-      padding: 12px;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 12px 0;
       background: #f1f5f9;
-      transition: all 0.2s;
+      transition: all 0.3s;
     }
     .sveltia-cms .entry-list-item:hover {
-      background: #e0e7ff;
-      transform: translateX(4px);
+      background: #dbeafe;
+      transform: translateX(8px);
+    }
+    .sveltia-cms input, .sveltia-cms select, .sveltia-cms textarea {
+      border-radius: 10px !important;
+      padding: 12px !important;
     }
   </style>
 </head>
