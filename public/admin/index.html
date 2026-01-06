@@ -3,47 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>商品管理后台</title>
+  <title>商品管理后台 - 专业版</title>
   <script src="https://unpkg.com/@sveltia/cms@latest/dist/sveltia-cms.js"></script>
   <style>
     :root {
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --bg: #f9fafb;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg: #f1f5f9;
       --surface: #ffffff;
-      --text: #111827;
-      --text-secondary: #4b5563;
-      --border: #e5e7eb;
+      --text: #0f172a;
+      --text-secondary: #475569;
+      --border: #cbd5e1;
+      --success: #10b981;
     }
-    body { background: var(--bg); margin: 0; font-family: system-ui, sans-serif; }
-    .sveltia-cms { max-width: 1600px; margin: 0 auto; padding: 24px; }
-    .sveltia-cms header { background: var(--surface); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 24px; }
-    .sveltia-cms nav { background: var(--surface); border-radius: 16px 0 0 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-    .sveltia-cms main { background: var(--surface); border-radius: 0 16px 16px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    body { background: linear-gradient(to bottom, #eef2ff, #f8fafc); margin: 0; font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; }
+    .sveltia-cms { max-width: 1600px; margin: 0 auto; padding: 32px; }
+    .sveltia-cms header { background: var(--surface); border-radius: 20px; padding: 32px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 32px; }
+    .sveltia-cms header h1 { font-size: 2.5em; color: var(--primary); margin: 0; }
+    .sveltia-cms header p { color: var(--text-secondary); font-size: 1.2em; margin-top: 12px; }
+    .sveltia-cms nav { background: var(--surface); border-radius: 20px 0 0 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding-top: 20px; }
+    .sveltia-cms main { background: var(--surface); border-radius: 0 20px 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
     .sveltia-cms button.primary {
       background: var(--primary) !important;
-      border-radius: 12px !important;
-      padding: 12px 28px !important;
+      border-radius: 16px !important;
+      padding: 14px 32px !important;
       font-size: 1.1em !important;
       font-weight: 600;
+      box-shadow: 0 4px 15px rgba(79,70,229,0.3);
     }
-    .sveltia-cms button.primary:hover { background: var(--primary-hover) !important; }
+    .sveltia-cms button.primary:hover { background: var(--primary-hover) !important; transform: translateY(-2px); }
     .sveltia-cms .entry-list-item {
-      border-radius: 12px;
-      padding: 16px;
-      margin: 12px 0;
-      background: #f1f5f9;
-      transition: all 0.3s;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 16px;
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      border: 1px solid var(--border);
+      transition: all 0.4s;
     }
     .sveltia-cms .entry-list-item:hover {
-      background: #dbeafe;
-      transform: translateX(8px);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+      border-color: var(--primary);
     }
+    .sveltia-cms .field { margin-bottom: 24px; }
     .sveltia-cms input, .sveltia-cms select, .sveltia-cms textarea {
-      border-radius: 10px !important;
-      padding: 12px !important;
+      border-radius: 12px !important;
+      padding: 14px !important;
+      border: 1px solid var(--border) !important;
+      font-size: 1.1em;
     }
+    .sveltia-cms .widget-markdown .editor { min-height: 300px; border-radius: 12px; }
   </style>
+  <!-- 可选：加载 Google Fonts Inter 更专业 -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 </body>
