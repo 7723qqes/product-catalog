@@ -1,3 +1,11 @@
+backend:
+  name: github
+  repo: 7723qqes/product-catalog
+  branch: main
+
+media_folder: images
+public_folder: /images
+
 collections:
   - name: products
     label: 商品管理
@@ -11,7 +19,7 @@ collections:
       - { label: 货币, name: currency, widget: select, options: ["USD", "KHR", "CNY"], default: "USD" }
       - { label: 单位, name: unit, widget: string, hint: "如：个、kg、件" }
       - { label: 分类, name: category, widget: string, hint: "如：水果、电子产品" }
-      - { label: 商品图片, name: image, widget: image }  # 删除 allow_multiple 行
+      - { label: 商品图片, name: image, widget: image }
       - { label: 商品描述, name: description, widget: markdown }
       - { label: 库存数量, name: stock, widget: number, default: 0, min: 0 }
       - { label: 是否上架, name: visible, widget: boolean, default: true }
