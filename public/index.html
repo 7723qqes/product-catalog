@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>商品目录 - 实时同步</title>
+  <title>商品目录</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* 保持美观一致，略 */
+    /* 美观样式同上，保持一致 */
     body { font-family: 'Inter', system-ui; background: #f1f5f9; margin: 0; padding: 20px; }
     header { text-align: center; padding: 60px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border-radius: 24px; margin-bottom: 40px; }
     h1 { margin: 0; font-size: 3.2em; }
     .refresh { text-align: center; margin: 40px 0; }
     .refresh button { padding: 16px 40px; font-size: 1.2em; background: #4f46e5; color: white; border: none; border-radius: 16px; cursor: pointer; box-shadow: 0 8px 25px rgba(79,70,229,0.3); }
     .refresh button:hover { background: #4338ca; transform: translateY(-4px); }
-    .auto-refresh { font-size: 0.9em; color: #64748b; margin-top: 12px; }
+    .auto { font-size: 0.9em; color: #64748b; margin-top: 12px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 32px; max-width: 1400px; margin: 0 auto; }
     .card { background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 12px 35px rgba(0,0,0,0.1); transition: 0.4s; }
     .card:hover { transform: translateY(-12px); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
@@ -23,7 +24,6 @@
     .meta { color: #64748b; font-size: 1.1em; margin: 8px 0; }
     .description { margin-top: 16px; color: #475569; line-height: 1.7; }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header>
@@ -32,8 +32,8 @@
   </header>
 
   <div class="refresh">
-    <button onclick="loadProducts()">手动刷新商品列表</button>
-    <div class="auto-refresh">每 30 秒自动刷新一次</div>
+    <button onclick="loadProducts()">手动刷新</button>
+    <div class="auto">每 20 秒自动刷新一次</div>
   </div>
 
   <div id="products" class="grid"></div>
@@ -45,17 +45,18 @@
     const folder = 'products';
 
     async function loadProducts() {
-      document.getElementById('products').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:100px;color:#64748b;font-size:1.3em;">加载商品中...</div>';
+      document.getElementById('products').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:100px;color:#64748b;font-size:1.3em;">加载中...</div>';
 
       try {
-        const apiUrl = `https://api.github.com/repos/${repo}/contents/${folder}?ref=${branch}&t=${Date.now()}`;
+        const timestamp = Date.now();
+        const apiUrl = `https://api.github.com/repos/${repo}/contents/${folder}?ref=${branch}&t=${timestamp}`;
         const res = await fetch(apiUrl);
         const files = await res.json();
 
         const products = [];
         for (const file of files) {
           if (file.name.endsWith('.yml') || file.name.endsWith('.yaml')) {
-            const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${folder}/${file.name}?t=${Date.now()}`;
+            const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${folder}/${file.name}?t=${timestamp}`;
             const contentRes = await fetch(rawUrl);
             const yamlText = await contentRes.text();
             const data = jsyaml.load(yamlText);
@@ -66,12 +67,12 @@
         products.sort((a, b) => (b.weight || 0) - (a.weight || 0) || (a.name || '').localeCompare(b.name || ''));
 
         document.getElementById('products').innerHTML = products.length === 0 
-          ? '<div style="grid-column:1/-1;text-align:center;padding:120px;color:#94a3b8;font-size:1.5em;">暂无商品，请在后台添加</div>'
+          ? '<div style="grid-column:1/-1;text-align:center;padding:120px;color:#94a3b8;font-size:1.5em;">暂无商品</div>'
           : products.map(p => `
             <div class="card">
-              ${p.image ? `<img src="${p.image}" alt="${p.name}">` : '<div style="height:280px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:1.3em;">无图片</div>'}
+              ${p.image ? `<img src="${p.image}?t=${timestamp}" alt="${p.name}">` : '<div style="height:280px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:1.3em;">无图片</div>'}
               <div class="info">
-                <div class="name">${p.name || '未命名商品'}</div>
+                <div class="name">${p.name || '未命名'}</div>
                 <div class="price">${p.price || '0'} ${p.currency || 'USD'}</div>
                 <div class="meta">${p.unit || ''} • ${p.category || '未分类'} • 库存: ${p.stock || 0}</div>
                 ${p.description ? `<div class="description">${p.description}</div>` : ''}
@@ -80,12 +81,12 @@
           `).join('');
 
       } catch (err) {
-        document.getElementById('products').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:120px;color:#dc2626;font-size:1.3em;">加载失败，请刷新页面</div>';
+        document.getElementById('products').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:120px;color:#dc2626;font-size:1.3em;">加载失败，请手动刷新</div>';
       }
     }
 
     loadProducts();
-    setInterval(loadProducts, 30000); // 每 30 秒自动刷新
+    setInterval(loadProducts, 20000); // 每 20 秒自动刷新
   </script>
 </body>
 </html>
