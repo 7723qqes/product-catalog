@@ -1,70 +1,80 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>商品管理后台</title>
+
   <script src="https://unpkg.com/@sveltia/cms@latest/dist/sveltia-cms.js"></script>
-  <!-- 加载 Inter 字体，更专业 -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    :root {
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --text: #0f172a;
-      --text-secondary: #475569;
-      --border: #e2e8f0;
-      --shadow-sm: 0 4px 15px rgba(0,0,0,0.06);
-      --shadow-lg: 0 12px 35px rgba(0,0,0,0.12);
+    body {
+      margin: 0;
+      font-family: Inter, system-ui;
+      background: linear-gradient(180deg,#eef2ff,#f8fafc);
     }
-    body { background: linear-gradient(to bottom, #eef2ff, var(--bg)); margin: 0; font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; }
-    .sveltia-cms { max-width: 1600px; margin: 0 auto; padding: 32px; background: var(--bg); }
-    .sveltia-cms header { background: var(--surface); border-radius: 24px; padding: 48px; text-align: center; box-shadow: var(--shadow-lg); margin-bottom: 40px; }
-    .sveltia-cms header h1 { font-size: 3em; color: var(--primary); margin: 0; font-weight: 700; }
-    .sveltia-cms header p { color: var(--text-secondary); font-size: 1.4em; margin-top: 16px; }
-    .sveltia-cms nav { background: var(--surface); border-radius: 24px 0 0 24px; box-shadow: var(--shadow-lg); padding: 32px 0; }
-    .sveltia-cms main { background: var(--surface); border-radius: 0 24px 24px 0; box-shadow: var(--shadow-lg); padding: 40px; }
-    .sveltia-cms button.primary {
-      background: var(--primary) !important;
-      color: white !important;
-      border-radius: 20px !important;
-      padding: 18px 48px !important;
-      font-size: 1.3em !important;
-      font-weight: 600;
-      box-shadow: 0 8px 25px rgba(79,70,229,0.3);
-      transition: all 0.3s ease;
+
+    .sveltia-cms {
+      max-width: 1600px;
+      margin: auto;
+      padding: 32px;
     }
-    .sveltia-cms button.primary:hover {
-      background: var(--primary-hover) !important;
-      transform: translateY(-6px);
-      box-shadow: 0 16px 40px rgba(79,70,229,0.4);
+
+    header {
+      background: white;
+      border-radius: 28px;
+      padding: 56px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.1);
+      margin-bottom: 40px;
     }
-    .sveltia-cms .entry-list-item {
-      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+
+    header h1 {
+      margin: 0;
+      font-size: 3em;
+      color: #4f46e5;
+    }
+
+    header p {
+      margin-top: 16px;
+      font-size: 1.4em;
+      color: #475569;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg,#4f46e5,#6366f1)!important;
+      border-radius: 20px!important;
+      padding: 18px 48px!important;
+      font-size: 1.2em!important;
+      box-shadow: 0 10px 30px rgba(79,70,229,.35);
+    }
+
+    .entry-list-item {
+      background: white;
       border-radius: 20px;
       padding: 28px;
       margin: 20px 0;
-      border: 1px solid var(--border);
-      transition: all 0.4s ease;
+      border: 1px solid #e5e7eb;
+      transition: .35s;
     }
-    .sveltia-cms .entry-list-item:hover {
-      background: #e0e7ff;
-      transform: translateY(-10px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--primary);
+
+    .entry-list-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(0,0,0,.15);
+      border-color: #6366f1;
     }
-    .sveltia-cms .field { margin-bottom: 40px; }
-    .sveltia-cms input, .sveltia-cms select, .sveltia-cms textarea {
-      border-radius: 16px !important;
-      padding: 18px !important;
-      font-size: 1.2em;
-      border: 1px solid var(--border) !important;
-      box-shadow: var(--shadow-sm);
+
+    input, select, textarea {
+      border-radius: 16px!important;
+      padding: 16px!important;
+      font-size: 1.1em;
     }
-    .sveltia-cms .widget-markdown .editor { min-height: 500px; border-radius: 20px; }
-    .sveltia-cms .search-input { border-radius: 20px !important; padding: 16px 24px !important; font-size: 1.2em; }
+
+    .widget-markdown .editor {
+      min-height: 420px;
+      border-radius: 20px;
+    }
   </style>
 </head>
 <body>
