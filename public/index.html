@@ -3,35 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>商品目录</title>
+  <title>商品目录 - 实时同步</title>
   <style>
-    /* 同上一个美观版本的样式，保持一致 */
-    body { font-family: system-ui; margin: 0; padding: 20px; background: #f9fafb; }
-    header { text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px; margin-bottom: 30px; }
-    h1 { margin: 0; font-size: 3em; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; max-width: 1400px; margin: 0 auto; }
-    .card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: 0.3s; }
-    .card:hover { transform: translateY(-12px); }
-    .card img { width: 100%; height: 260px; object-fit: cover; }
-    .info { padding: 24px; }
-    .name { font-size: 1.6em; font-weight: bold; color: #1e293b; }
-    .price { font-size: 2em; color: #ec4899; font-weight: bold; margin: 12px 0; }
-    .description { color: #4b5563; line-height: 1.6; margin-top: 12px; }
-    .refresh-btn { text-align: center; margin: 40px 0; }
-    .refresh-btn button { padding: 12px 32px; font-size: 1.1em; background: #3b82f6; color: white; border: none; border-radius: 12px; cursor: pointer; }
+    /* 保持美观一致，略 */
+    body { font-family: 'Inter', system-ui; background: #f1f5f9; margin: 0; padding: 20px; }
+    header { text-align: center; padding: 60px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border-radius: 24px; margin-bottom: 40px; }
+    h1 { margin: 0; font-size: 3.2em; }
+    .refresh { text-align: center; margin: 40px 0; }
+    .refresh button { padding: 16px 40px; font-size: 1.2em; background: #4f46e5; color: white; border: none; border-radius: 16px; cursor: pointer; box-shadow: 0 8px 25px rgba(79,70,229,0.3); }
+    .refresh button:hover { background: #4338ca; transform: translateY(-4px); }
+    .auto-refresh { font-size: 0.9em; color: #64748b; margin-top: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 32px; max-width: 1400px; margin: 0 auto; }
+    .card { background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 12px 35px rgba(0,0,0,0.1); transition: 0.4s; }
+    .card:hover { transform: translateY(-12px); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+    .card img { width: 100%; height: 280px; object-fit: cover; }
+    .info { padding: 28px; }
+    .name { font-size: 1.8em; font-weight: bold; color: #1e293b; }
+    .price { font-size: 2.2em; color: #ec4899; font-weight: bold; margin: 16px 0; }
+    .meta { color: #64748b; font-size: 1.1em; margin: 8px 0; }
+    .description { margin-top: 16px; color: #475569; line-height: 1.7; }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header>
     <h1>商品目录</h1>
-    <p>实时更新 · 最新商品一览</p>
+    <p>实时同步 · CMS 保存后自动更新</p>
   </header>
 
-  <div id="products" class="grid"></div>
-
-  <div class="refresh-btn">
-    <button onclick="loadProducts()">刷新商品列表（保存后点这里立即显示）</button>
+  <div class="refresh">
+    <button onclick="loadProducts()">手动刷新商品列表</button>
+    <div class="auto-refresh">每 30 秒自动刷新一次</div>
   </div>
+
+  <div id="products" class="grid"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
   <script>
@@ -40,50 +45,47 @@
     const folder = 'products';
 
     async function loadProducts() {
-      document.getElementById('products').innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #666;">加载中...</div>';
+      document.getElementById('products').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:100px;color:#64748b;font-size:1.3em;">加载商品中...</div>';
 
       try {
-        const apiUrl = `https://api.github.com/repos/${repo}/contents/${folder}?ref=${branch}`;
+        const apiUrl = `https://api.github.com/repos/${repo}/contents/${folder}?ref=${branch}&t=${Date.now()}`;
         const res = await fetch(apiUrl);
         const files = await res.json();
 
         const products = [];
         for (const file of files) {
           if (file.name.endsWith('.yml') || file.name.endsWith('.yaml')) {
-            const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${folder}/${file.name}`;
-            const contentRes = await fetch(rawUrl + '?t=' + Date.now()); // 绕过缓存
+            const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${folder}/${file.name}?t=${Date.now()}`;
+            const contentRes = await fetch(rawUrl);
             const yamlText = await contentRes.text();
             const data = jsyaml.load(yamlText);
-            if (data.visible !== false) {
-              data.image = data.image || '';
-              products.push(data);
-            }
+            if (data.visible !== false) products.push(data);
           }
         }
 
-        // 排序：权重降序 → 名称升序
         products.sort((a, b) => (b.weight || 0) - (a.weight || 0) || (a.name || '').localeCompare(b.name || ''));
 
         document.getElementById('products').innerHTML = products.length === 0 
-          ? '<div style="grid-column: 1/-1; text-align: center; padding: 80px; color: #999; font-size: 1.3em;">暂无商品</div>'
+          ? '<div style="grid-column:1/-1;text-align:center;padding:120px;color:#94a3b8;font-size:1.5em;">暂无商品，请在后台添加</div>'
           : products.map(p => `
             <div class="card">
-              ${p.image ? `<img src="${p.image}" alt="${p.name}">` : '<div style="height:260px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:1.2em;">无图片</div>'}
+              ${p.image ? `<img src="${p.image}" alt="${p.name}">` : '<div style="height:280px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:1.3em;">无图片</div>'}
               <div class="info">
-                <div class="name">${p.name || '未命名'}</div>
+                <div class="name">${p.name || '未命名商品'}</div>
                 <div class="price">${p.price || '0'} ${p.currency || 'USD'}</div>
-                <div class="unit">${p.unit || ''} • ${p.category || '未分类'}</div>
+                <div class="meta">${p.unit || ''} • ${p.category || '未分类'} • 库存: ${p.stock || 0}</div>
                 ${p.description ? `<div class="description">${p.description}</div>` : ''}
               </div>
             </div>
           `).join('');
 
       } catch (err) {
-        document.getElementById('products').innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 80px; color: #dc2626;">加载失败，请刷新页面重试</div>';
+        document.getElementById('products').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:120px;color:#dc2626;font-size:1.3em;">加载失败，请刷新页面</div>';
       }
     }
 
     loadProducts();
+    setInterval(loadProducts, 30000); // 每 30 秒自动刷新
   </script>
 </body>
 </html>
