@@ -1,4 +1,4 @@
-fetch('/api/products?page=1')  // 或加分类 ?category=水果
+fetch('/api/products?page=1')
   .then(res => res.json())
   .then(data => {
     const container = document.getElementById('products');
