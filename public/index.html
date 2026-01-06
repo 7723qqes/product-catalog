@@ -1,177 +1,20 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>商品目录</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      font-family: Inter, system-ui;
-      background: #f1f5f9;
-      margin: 0;
-      padding: 24px;
-      color: #0f172a;
-    }
-    header {
-      text-align: center;
-      padding: 64px 24px;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      color: white;
-      border-radius: 28px;
-      margin-bottom: 48px;
-    }
-    h1 { font-size: 3em; margin: 0; }
-    .controls { text-align: center; margin-bottom: 48px; }
-    button {
-      padding: 14px 36px;
-      font-size: 1.2em;
-      background: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 18px;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(79,70,229,.3);
-      transition: .3s;
-    }
-    button:hover { transform: translateY(-4px); background: #4338ca; }
-    .auto { color: #64748b; margin-top: 10px; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px,1fr));
-      gap: 32px;
-      max-width: 1400px;
-      margin: auto;
-    }
-    .card {
-      background: white;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 14px 40px rgba(0,0,0,.1);
-      transition: .4s;
-    }
-    .card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 30px 70px rgba(0,0,0,.18);
-    }
-    .card img {
-      width: 100%;
-      height: 280px;
-      object-fit: cover;
-    }
-    .no-image {
-      height: 280px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #e5e7eb;
-      color: #64748b;
-      font-size: 1.2em;
-    }
-    .info { padding: 28px; }
-    .name { font-size: 1.7em; font-weight: 700; }
-    .price { font-size: 2.1em; color: #ec4899; margin: 14px 0; font-weight: 700; }
-    .meta { color: #64748b; font-size: 1em; }
-    .description { margin-top: 16px; line-height: 1.7; color: #334155; }
-    .loading {
-      grid-column: 1/-1;
-      text-align: center;
-      padding: 100px;
-      font-size: 1.4em;
-      color: #64748b;
-    }
-  </style>
-</head>
-
-<body>
-<header>
-  <h1>商品目录</h1>
-  <p>CMS 保存后 · 自动同步</p>
-</header>
-
-<div class="controls">
-  <button onclick="loadProducts()">手动刷新</button>
-  <div class="auto">每 20 秒自动刷新</div>
-</div>
-
-<div id="products" class="grid">
-  <div class="loading">加载中…</div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-<script>
-const repo = '7723qqes/product-catalog';
-const branch = 'main';
-const folder = 'products';
-
-function parseFrontMatter(text) {
-  const match = text.match(/^---\s*([\s\S]*?)\s*---\s*([\s\S]*)$/);
-  if (!match) return null;
-  const data = jsyaml.load(match[1]);
-  data.description = marked.parse(match[2] || '');
-  return data;
-}
-
-async function loadProducts() {
-  const container = document.getElementById('products');
-  container.innerHTML = '<div class="loading">加载中…</div>';
-
-  const ts = Date.now();
-  const base = location.origin + location.pathname.replace(/\/$/, '');
-
-  try {
-    const res = await fetch(
-      `https://api.github.com/repos/${repo}/contents/${folder}?ref=${branch}&t=${ts}`
-    );
-    const files = await res.json();
-    const products = [];
-
-    for (const f of files) {
-      if (!/\.(md|ya?ml)$/.test(f.name)) continue;
-
-      const raw = `https://raw.githubusercontent.com/${repo}/${branch}/${folder}/${f.name}?t=${ts}`;
-      const txt = await (await fetch(raw)).text();
-
-      let data = f.name.endsWith('.md')
-        ? parseFrontMatter(txt)
-        : jsyaml.load(txt);
-
-      if (data && data.visible !== false) products.push(data);
-    }
-
-    products.sort((a,b)=>
-      (b.weight||0)-(a.weight||0) || (a.name||'').localeCompare(b.name||'')
-    );
-
-    container.innerHTML = products.length === 0
-      ? '<div class="loading">暂无商品</div>'
-      : products.map(p=>`
-        <div class="card">
-          ${p.image
-            ? `<img src="${base}${p.image}?t=${ts}">`
-            : `<div class="no-image">无图片</div>`
-          }
-          <div class="info">
-            <div class="name">${p.name}</div>
-            <div class="price">${p.price} ${p.currency}</div>
-            <div class="meta">${p.unit||''} · ${p.category||'未分类'} · 库存 ${p.stock||0}</div>
-            <div class="description">${p.description||''}</div>
-          </div>
+fetch('/api/products?page=1')  // 或加分类 ?category=水果
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById('products');
+    container.innerHTML = data.list.map(p => `
+      <div class="card">
+        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<div class="no-image">无图片</div>`}
+        <div class="info">
+          <div class="name">${p.name}</div>
+          <div class="price">${p.price} ${p.currency}</div>
+          <div class="meta">${p.unit || ''} · ${p.category || '未分类'} · 库存 ${p.stock || 0}</div>
+          <div class="description">${marked.parse(p.body || '')}</div>
         </div>
-      `).join('');
-
-  } catch {
+      </div>
+    `).join('');
+  })
+  .catch(() => {
+    const container = document.getElementById('products');
     container.innerHTML = '<div class="loading">加载失败</div>';
-  }
-}
-
-loadProducts();
-setInterval(loadProducts, 20000);
-</script>
-</body>
-</html>
+  });
