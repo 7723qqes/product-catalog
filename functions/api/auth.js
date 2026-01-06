@@ -1,4 +1,12 @@
 export async function onRequest(context) {
+  const { env } = context;
+  if (env.GITHUB_CLIENT_ID === undefined) {
+    return new Response("ERROR: GITHUB_CLIENT_ID is undefined!", { status: 500 });
+  }
+  return new Response("OK: Client ID loaded: " + env.GITHUB_CLIENT_ID.substring(0,5) + "...", { status: 200 });
+  // 原代码注释掉
+}
+export async function onRequest(context) {
     const {
         request, // same as existing Worker API
         env, // same as existing Worker API
