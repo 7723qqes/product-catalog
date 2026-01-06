@@ -8,52 +8,20 @@ public_folder: /images
 
 collections:
   - name: products
-    label: 商品管理
+    label: 商品
     folder: products
     create: true
-    slug: "{{name}}"
-    summary: "{{name}} - {{price}} {{currency}}"
+    slug: "{{slug}}"
+    summary: "{{name}} · {{price}} {{currency}}"
+
     fields:
-      - label: 商品名称
-        name: name
-        widget: string
-        required: true
-      - label: 价格
-        name: price
-        widget: number
-        required: true
-        min: 0
-        step: 0.01
-      - label: 货币
-        name: currency
-        widget: select
-        options: ["USD", "KHR", "CNY"]
-        default: "USD"
-      - label: 单位
-        name: unit
-        widget: string
-        hint: "如：个、kg、件"
-      - label: 分类
-        name: category
-        widget: string
-        hint: "如：水果、电子产品"
-      - label: 商品图片
-        name: image
-        widget: image
-      - label: 商品描述
-        name: description
-        widget: markdown
-      - label: 库存数量
-        name: stock
-        widget: number
-        default: 0
-        min: 0
-      - label: 是否上架
-        name: visible
-        widget: boolean
-        default: true
-      - label: 排序权重
-        name: weight
-        widget: number
-        default: 0
-        hint: "数字越大排序越靠前"
+      - { label: 商品名称, name: name, widget: string }
+      - { label: 价格, name: price, widget: number, min: 0, step: 0.01 }
+      - { label: 货币, name: currency, widget: select, options: ["USD","KHR","CNY"], default: "USD" }
+      - { label: 单位, name: unit, widget: string }
+      - { label: 分类, name: category, widget: string }
+      - { label: 商品图片, name: image, widget: image }
+      - { label: 商品描述, name: body, widget: markdown }
+      - { label: 库存, name: stock, widget: number, default: 0 }
+      - { label: 是否上架, name: visible, widget: boolean, default: true }
+      - { label: 排序权重, name: weight, widget: number, default: 0 }
