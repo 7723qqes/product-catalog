@@ -1,27 +1,60 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>商品目录</title>
+  <title>商品管理后台</title>
+  <!-- Sveltia CMS 主脚本 -->
+  <script src="https://unpkg.com/@sveltia/cms@latest/dist/sveltia-cms.js"></script>
+  <!-- 自定义美化样式 -->
   <style>
-    body { font-family: system-ui, sans-serif; margin: 0; padding: 20px; background: #f8f9fa; }
-    h1 { text-align: center; color: #333; margin-bottom: 10px; }
-    .controls { text-align: center; margin-bottom: 30px; }
-    select { padding: 8px 12px; font-size: 1em; border-radius: 8px; border: 1px solid #ddd; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
-    .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.3s; }
-    .card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
-    .card img { width: 100%; height: 220px; object-fit: cover; background: #eee; }
-    .info { padding: 16px; }
-    .name { font-size: 1.4em; font-weight: bold; margin: 0 0 8px; color: #222; }
-    .price { font-size: 1.6em; color: #e91e63; font-weight: bold; margin: 8px 0; }
-    .unit { color: #666; font-size: 0.95em; }
-    .category { color: #555; font-style: italic; margin-top: 8px; }
-    .no-image { display: flex; align-items: center; justify-content: center; height: 220px; background: #eee; color: #999; font-size: 1.1em; }
-    .loading { text-align: center; padding: 40px; color: #666; }
+    :root {
+      --cms-primary: #2563eb;
+      --cms-primary-hover: #1d4ed8;
+      --cms-bg: #f8fafc;
+      --cms-surface: #ffffff;
+      --cms-text: #1e293b;
+      --cms-border: #e2e8f0;
+    }
+    body { background: var(--cms-bg); margin: 0; font-family: system-ui, -apple-system, sans-serif; }
+    /* 整体布局更宽松 */
+    .sveltia-cms { max-width: 1400px; margin: 0 auto; padding: 16px; }
+    /* 顶部栏美化 */
+    .sveltia-cms header { background: var(--cms-surface); border-bottom: 1px solid var(--cms-border); border-radius: 12px 12px 0 0; padding: 16px; }
+    /* 侧边栏 */
+    .sveltia-cms nav { background: var(--cms-surface); border-right: 1px solid var(--cms-border); border-radius: 12px 0 0 12px; }
+    /* 主内容区 */
+    .sveltia-cms main { background: var(--cms-surface); border-radius: 0 12px 12px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    /* 按钮美化 */
+    .sveltia-cms button primary {
+      background: var(--cms-primary) !important;
+      border-radius: 8px !important;
+      padding: 10px 20px !important;
+      font-weight: 600;
+    }
+    .sveltia-cms button primary:hover {
+      background: var(--cms-primary-hover) !important;
+    }
+    /* 卡片和输入框 */
+    .sveltia-cms .card, .sveltia-cms input, .sveltia-cms select, .sveltia-cms textarea {
+      border-radius: 8px !important;
+      border: 1px solid var(--cms-border) !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    /* 商品列表更清晰 */
+    .sveltia-cms .entry-list-item {
+      border-radius: 10px;
+      margin: 8px 0;
+      padding: 12px;
+      background: #f1f5f9;
+      transition: all 0.2s;
+    }
+    .sveltia-cms .entry-list-item:hover {
+      background: #e0e7ff;
+      transform: translateX(4px);
+    }
   </style>
 </head>
 <body>
-  <h1>商品目录</h1>
-  <div class="
+</body>
+</html>
