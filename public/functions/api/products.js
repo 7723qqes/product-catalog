@@ -7,7 +7,7 @@ export async function onRequest({ request }) {
   const pageSize = 10; // 每页显示数量
 
   // 读取 products.json
-  const res = await fetch('https://你的域名/products.json', {
+  const res = await fetch('https://product-catalog-7jm.pages.dev/products.json', {
     cf: { cacheTtl: 300 } // CDN 缓存 5 分钟
   });
 
