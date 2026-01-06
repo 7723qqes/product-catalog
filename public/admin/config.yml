@@ -1,21 +1,22 @@
 backend:
   name: github
-  repo: username/repo
-  branch: main # Branch to update (optional; defaults to master)
-  base_url: https://example.com
-  auth_endpoint: /api/auth
+  repo: 7723qqes/product-catalog 
+  branch: main
+  base_url: https://product-catalog-7jm.pages.dev  # 替换成你的 Cloudflare Pages 完整域名（如 https://product-catalog-7jm.pages.dev），无尾部 /
+  site_domain: product-catalog-7jm.pages.dev      # 只域名部分，无 https:// 和尾部 /
+  auth_endpoint: api/auth                # 默认路径，对应 functions/api/auth.js
 media_folder: static/img
 public_folder: /img
 collections:
-  - name: 'blog'
-    label: 'Blog'
-    folder: 'content/blog'
+  - name: blog
+    label: Blog
+    folder: content/blog
     create: true
-    slug: '{{slug}}'
+    slug: "{{slug}}"
     editor:
       preview: false
     fields:
-      - { label: 'Title', name: 'title', widget: 'string' }
-      - { label: 'Publish Date', name: 'date', widget: 'datetime' }
-      - { label: 'Description', name: 'description', widget: 'string' }
-      - { label: 'Body', name: 'body', widget: 'markdown' }
+      - { label: Title, name: title, widget: string }
+      - { label: Publish Date, name: date, widget: datetime }
+      - { label: Description, name: description, widget: string }
+      - { label: Body, name: body, widget: markdown }
