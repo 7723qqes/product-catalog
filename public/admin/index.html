@@ -1,64 +1,105 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>商品管理后台</title>
-  <script src="https://unpkg.com/@sveltia/cms@latest/dist/sveltia-cms.js"></script>
+  <title>商品目录</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --text: #0f172a;
-      --text-secondary: #475569;
-      --border: #e2e8f0;
-      --shadow: 0 10px 30px rgba(0,0,0,0.08);
-    }
-    body { background: var(--bg); margin: 0; font-family: 'Inter', system-ui; }
-    .sveltia-cms { max-width: 1600px; margin: 0 auto; padding: 32px; background: var(--bg); }
-    .sveltia-cms header { background: var(--surface); border-radius: 20px; padding: 40px; text-align: center; box-shadow: var(--shadow); margin-bottom: 32px; }
-    .sveltia-cms header h1 { font-size: 2.8em; color: var(--primary); margin: 0; }
-    .sveltia-cms header p { color: var(--text-secondary); font-size: 1.3em; margin-top: 16px; }
-    .sveltia-cms nav { background: var(--surface); border-radius: 20px 0 0 20px; box-shadow: var(--shadow); padding: 24px 0; }
-    .sveltia-cms main { background: var(--surface); border-radius: 0 20px 20px 0; box-shadow: var(--shadow); padding: 32px; }
-    .sveltia-cms button.primary {
-      background: var(--primary) !important;
-      color: white !important;
-      border-radius: 16px !important;
-      padding: 16px 40px !important;
-      font-size: 1.2em !important;
-      font-weight: 600;
-      box-shadow: 0 6px 20px rgba(79,70,229,0.3);
-      transition: all 0.3s;
-    }
-    .sveltia-cms button.primary:hover { background: var(--primary-hover) !important; transform: translateY(-4px); }
-    .sveltia-cms .entry-list-item {
-      background: #f1f5f9;
-      border-radius: 16px;
-      padding: 24px;
-      margin: 16px 0;
-      border: 1px solid var(--border);
-      transition: all 0.4s;
-    }
-    .sveltia-cms .entry-list-item:hover {
-      background: #e0e7ff;
-      transform: translateY(-8px);
-      box-shadow: 0 12px 30px rgba(79,70,229,0.2);
-      border-color: var(--primary);
-    }
-    .sveltia-cms .field { margin-bottom: 32px; }
-    .sveltia-cms input, .sveltia-cms select, .sveltia-cms textarea {
-      border-radius: 12px !important;
-      padding: 16px !important;
-      font-size: 1.1em;
-      border: 1px solid var(--border) !important;
-    }
-    .sveltia-cms .widget-markdown .editor { min-height: 400px; border-radius: 16px; }
+    body { font-family: 'Inter', system-ui; background: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }
+    header { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-radius: 24px; margin-bottom: 40px; }
+    h1 { margin: 0; font-size: 3em; }
+    .controls { text-align: center; margin: 40px 0; }
+    button { padding: 14px 36px; font-size: 1.2em; background: #4f46e5; color: white; border: none; border-radius: 16px; cursor: pointer; box-shadow: 0 8px 25px rgba(79,70,229,0.3); transition: 0.3s; }
+    button:hover { background: #4338ca; transform: translateY(-4px); }
+    .auto { margin-top: 12px; color: #64748b; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px; max-width: 1400px; margin: 0 auto; }
+    .card { background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 12px 35px rgba(0,0,0,0.1); transition: 0.4s; }
+    .card:hover { transform: translateY(-12px); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+    .card img { width: 100%; height: 280px; object-fit: cover; }
+    .no-image { height: 280px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.3em; }
+    .info { padding: 28px; }
+    .name { font-size: 1.8em; font-weight: bold; }
+    .price { font-size: 2.2em; color: #ec4899; font-weight: bold; margin: 16px 0; }
+    .meta { color: #64748b; font-size: 1.1em; }
+    .description { margin-top: 16px; color: #475569; line-height: 1.7; }
+    .loading { grid-column: 1/-1; text-align: center; padding: 100px; color: #64748b; font-size: 1.5em; }
   </style>
 </head>
 <body>
+  <header>
+    <h1>商品目录</h1>
+    <p>实时同步 · CMS 保存后自动更新</p>
+  </header>
+
+  <div class="controls">
+    <button onclick="loadProducts()">手动刷新商品列表</button>
+    <div class="auto">每 20 秒自动刷新一次</div>
+  </div>
+
+  <div id="products" class="grid">
+    <div class="loading">加载中...</div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+  <script>
+    const repo = '7723qqes/product-catalog';
+    const branch = 'main';
+    const folder = 'products';
+
+    async function loadProducts() {
+      const container = document.getElementById('products');
+      container.innerHTML = '<div class="loading">加载中...</div>';
+
+      const timestamp = Date.now(); // 时间戳绕过缓存
+
+      try {
+        const apiUrl = `https://api.github.com/repos/${repo}/contents/${folder}?ref=${branch}&t=${timestamp}`;
+        const res = await fetch(apiUrl);
+        const files = await res.json();
+
+        if (!Array.isArray(files) || files.length === 0) {
+          container.innerHTML = '<div class="loading">暂无商品</div>';
+          return;
+        }
+
+        const products = [];
+        for (const file of files) {
+          if (file.name.endsWith('.yml') || file.name.endsWith('.yaml')) {
+            const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${folder}/${file.name}?t=${timestamp}`;
+            const contentRes = await fetch(rawUrl);
+            const text = await contentRes.text();
+            const data = jsyaml.load(text);
+            if (data.visible !== false) {
+              products.push(data);
+            }
+          }
+        }
+
+        // 排序
+        products.sort((a, b) => (b.weight || 0) - (a.weight || 0) || (a.name || '').localeCompare(b.name || ''));
+
+        container.innerHTML = products.length === 0 
+          ? '<div class="loading">暂无商品</div>'
+          : products.map(p => `
+            <div class="card">
+              ${p.image ? `<img src="${p.image}?t=${timestamp}" alt="${p.name}">` : '<div class="no-image">无图片</div>'}
+              <div class="info">
+                <div class="name">${p.name || '未命名'}</div>
+                <div class="price">${p.price || '0'} ${p.currency || 'USD'}</div>
+                <div class="meta">${p.unit || ''} • ${p.category || '未分类'} • 库存: ${p.stock || 0}</div>
+                ${p.description ? `<div class="description">${p.description}</div>` : ''}
+              </div>
+            </div>
+          `).join('');
+
+      } catch (err) {
+        container.innerHTML = '<div class="loading">加载失败，请手动刷新</div>';
+      }
+    }
+
+    loadProducts();
+    setInterval(loadProducts, 20000); // 20 秒自动刷新
+  </script>
 </body>
 </html>
