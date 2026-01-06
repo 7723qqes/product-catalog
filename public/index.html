@@ -1,20 +1,101 @@
-fetch('/api/products?page=1')
-  .then(res => res.json())
-  .then(data => {
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商品目录</title>
+
+  <!-- 字体 -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- marked 库：解析 Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <style>
+    body { font-family: 'Inter', system-ui; background: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }
+    header { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-radius: 24px; margin-bottom: 40px; }
+    h1 { margin: 0; font-size: 3em; }
+    .controls { text-align: center; margin: 20px 0; }
+    select, button { padding: 10px 20px; font-size: 1em; border-radius: 12px; border: none; cursor: pointer; }
+    button { background: #4f46e5; color: white; }
+    button:hover { background: #4338ca; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 32px; max-width: 1400px; margin: 0 auto; }
+    .card { background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 12px 35px rgba(0,0,0,0.1); transition: 0.4s; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+    .card img { width: 100%; height: 280px; object-fit: cover; }
+    .no-image { height: 280px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.3em; }
+    .info { padding: 20px; }
+    .name { font-size: 1.5em; font-weight: bold; }
+    .price { font-size: 1.8em; color: #ec4899; font-weight: bold; margin: 12px 0; }
+    .meta { color: #64748b; font-size: 1em; }
+    .description { margin-top: 12px; color: #475569; line-height: 1.5; }
+    .loading { grid-column: 1/-1; text-align: center; padding: 60px; color: #64748b; font-size: 1.2em; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>商品目录</h1>
+    <p>实时同步 · CMS 保存后自动更新</p>
+  </header>
+
+  <div class="controls">
+    <select id="categorySelect">
+      <option value="">全部分类</option>
+      <option value="水果">水果</option>
+      <option value="电子产品">电子产品</option>
+      <!-- 可以根据你 products.json 分类扩展 -->
+    </select>
+    <button id="refreshBtn">刷新商品</button>
+  </div>
+
+  <div id="products" class="grid">
+    <div class="loading">加载中...</div>
+  </div>
+
+  <script>
     const container = document.getElementById('products');
-    container.innerHTML = data.list.map(p => `
-      <div class="card">
-        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<div class="no-image">无图片</div>`}
-        <div class="info">
-          <div class="name">${p.name}</div>
-          <div class="price">${p.price} ${p.currency}</div>
-          <div class="meta">${p.unit || ''} · ${p.category || '未分类'} · 库存 ${p.stock || 0}</div>
-          <div class="description">${marked.parse(p.body || '')}</div>
-        </div>
-      </div>
-    `).join('');
-  })
-  .catch(() => {
-    const container = document.getElementById('products');
-    container.innerHTML = '<div class="loading">加载失败</div>';
-  });
+    const categorySelect = document.getElementById('categorySelect');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    async function loadProducts(category = '') {
+      container.innerHTML = '<div class="loading">加载中...</div>';
+      try {
+        const url = '/api/products' + (category ? `?category=${category}` : '');
+        const res = await fetch(url);
+        const data = await res.json();
+        const products = data.list || [];
+
+        if (products.length === 0) {
+          container.innerHTML = '<div class="loading">暂无商品</div>';
+          return;
+        }
+
+        container.innerHTML = products.map(p => `
+          <div class="card">
+            ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<div class="no-image">无图片</div>`}
+            <div class="info">
+              <div class="name">${p.name}</div>
+              <div class="price">${p.price} ${p.currency}</div>
+              <div class="meta">${p.unit || ''} · ${p.category || '未分类'} · 库存 ${p.stock || 0}</div>
+              <div class="description">${marked.parse(p.body || '')}</div>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        container.innerHTML = '<div class="loading">加载失败，请刷新</div>';
+        console.error(err);
+      }
+    }
+
+    // 事件绑定
+    categorySelect.addEventListener('change', () => loadProducts(categorySelect.value));
+    refreshBtn.addEventListener('click', () => loadProducts(categorySelect.value));
+
+    // 页面初始加载
+    loadProducts();
+  </script>
+
+</body>
+</html>
